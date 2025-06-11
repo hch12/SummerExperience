@@ -6,7 +6,7 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://121.40.173.38:3306/canvas?
-    username: jdb
+    username: rjt
     password: 123456
 mybatis:
   ## 映射xml

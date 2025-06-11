@@ -1,20 +1,24 @@
 package com.example.back.controller;
 
+import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import com.example.back.common.Result;
+import com.example.back.entity.page;
 import com.example.back.service.canvasService;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/canvas")
 public class canvasController {
     @Resource com.example.back.service.canvasService canvasService;
 
-    @GetMapping("/hello") // 接口的路径，全局唯一的
-    public Result hello() {
-        return Result.success("ty");  // 接口的返回值
+    @PostMapping("/save") // 接口的路径，全局唯一的
+    public Result hello(@RequestBody page object) {
+        JSONObject result=canvasService.saveCanvas(object.getOpenid(),object.getData());
+        System.out.println("hello");
+        System.out.println(object.getOpenid());
+        System.out.println(object.getData());
+        return Result.success(result);  // 接口的返回值
     }
 }
