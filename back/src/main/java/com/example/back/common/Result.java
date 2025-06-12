@@ -1,38 +1,39 @@
 package com.example.back.common;
 
-public class Result<T> {
+public class Result {
     private String code;
-    private T data;
+    private Object data;
     private String msg;
 
-    public static <T> Result<T> success() {
-        Result<T> result = new Result<>();
+    public static Result success() {
+        Result result = new Result();
         result.setCode("200");
         result.setMsg("请求成功");
         return result;
     }
 
-    public static <T> Result<T> success(T data) {
-        Result<T> result = new Result<>();
+    public static Result success(Object data) {
+        Result result = new Result();
         result.setCode("200");
         result.setData(data);
         result.setMsg("请求成功");
         return result;
     }
 
-    public static <T> Result<T> error(String msg) {
-        Result<T> result = new Result<>();
+    public static Result error(String msg) {
+        Result result = new Result();
         result.setCode("500");
         result.setMsg(msg);
         return result;
     }
 
-    public static <T> Result<T> error(String code, String msg) {
-        Result<T> result = new Result<>();
+    public static Result error(String code, String msg) {
+        Result result = new Result();
         result.setCode(code);
         result.setMsg(msg);
         return result;
     }
+
 
     public String getCode() {
         return code;
@@ -42,11 +43,11 @@ public class Result<T> {
         this.code = code;
     }
 
-    public T getData() {
+    public Object getData() {
         return data;
     }
 
-    public void setData(T data) {
+    public void setData(Object data) {
         this.data = data;
     }
 
