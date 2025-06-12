@@ -1,5 +1,7 @@
 package com.example.back.entity;
 
+import java.sql.Date;
+
 public class Element {
     private String openid;
     private String src;
@@ -9,6 +11,8 @@ public class Element {
     private int height;
     private double angle;
     private String canvasid;
+    private java.sql.Date createtime;  // 或 LocalDateTime
+    private Date updatetime;  // 或 LocalDateTime
 
     public String getCanvasid() {
         return canvasid;
