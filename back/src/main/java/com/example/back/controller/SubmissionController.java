@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/submission")
+@RequestMapping("/api/submission")
 public class SubmissionController {
 
     private final SubmissionService submissionService;
