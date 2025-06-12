@@ -17,25 +17,25 @@ public class PresetController {
     private PresetService presetService;
 
     @PostMapping("/uploadPreset")
-    public Result<Void> uploadPreset(@RequestBody PresetDTO presetDTO) {
+    public Result uploadPreset(@RequestBody PresetDTO presetDTO) {
         presetService.uploadPreset(presetDTO.getTemplate(), presetDTO.getElements());
         return Result.success(null);
     }
 
     @GetMapping("/getPresetList")
-    public Result<List<PresetTemplate>> getPresetList() {
+    public Result getPresetList() {
         List<PresetTemplate> presets = presetService.getPresetList();
         return Result.success(presets);
     }
 
     @GetMapping("/{id}")
-    public Result<PresetTemplate> getPresetById(@PathVariable String id) {
+    public Result getPresetById(@PathVariable String id) {
         PresetTemplate preset = presetService.getPresetById(id);
         return Result.success(preset);
     }
 
     @GetMapping("/{id}/elements")
-    public Result<List<PresetElement>> getPresetElements(@PathVariable String id) {
+    public Result getPresetElements(@PathVariable String id) {
         List<PresetElement> elements = presetService.getPresetElements(id);
         return Result.success(elements);
     }
