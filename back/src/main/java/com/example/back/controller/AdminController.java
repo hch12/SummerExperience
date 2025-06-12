@@ -13,13 +13,13 @@ public class AdminController {
     @Resource
     private AdminService adminService;
 
-    @GetMapping("/check")
+    @PostMapping("/check-admin")
     public Result checkAdmin(@RequestParam String openid) {
         boolean isAdmin = adminService.checkAdmin(openid);
         return Result.success(isAdmin);
     }
 
-    @GetMapping("/images")
+    @PostMapping("/all-images")
     public Result getAllImages() {
         Map<String, String[]> images = adminService.getAllImages();
         return Result.success(images);
