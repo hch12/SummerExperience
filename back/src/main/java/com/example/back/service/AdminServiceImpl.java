@@ -15,10 +15,10 @@ public class AdminServiceImpl implements AdminService {
     @Resource
     private AdminMapper adminMapper;
 
-    @Value("${image.base-url:http://x3c45867.natappfree.cc/images}")
+    @Value("${image.base-url}")
     private String baseUrl;
 
-    @Value("${image.directory:images}")
+    @Value("${image.directory}")
     private String imageDirectory;
 
     @Override
