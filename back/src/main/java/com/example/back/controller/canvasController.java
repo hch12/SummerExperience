@@ -21,7 +21,7 @@ public class canvasController {
         JSONObject result=canvasService.saveCanvas(object.getOpenid(),object.getData());
         return Result.success(result);  // 接口的返回值
     }
-    @GetMapping("/update") // 接口的路径，全局唯一的
+    @PostMapping("/update") // 接口的路径，全局唯一的
     public Result update(@RequestBody page object) {
         System.out.println("接收数据:");
         System.out.println(object.getOpenid());
@@ -29,7 +29,7 @@ public class canvasController {
         JSONObject result=canvasService.updateCanvas(object.getOpenid(),object.getData());
         return Result.success(result);  // 接口的返回值
     }
-    @GetMapping ("/list") // 接口的路径，全局唯一的
+    @PostMapping ("/list") // 接口的路径，全局唯一的
     public Result getCanvasList(@RequestBody page object) {
         System.out.println("接收数据:");
         System.out.println(object.getOpenid());
@@ -37,7 +37,7 @@ public class canvasController {
         JSONObject result=canvasService.getCanvasListByOpenId(object.getOpenid());
         return Result.success(result);  // 接口的返回值
     }
-    @GetMapping("/detail") // 接口的路径，全局唯一的
+    @PostMapping("/detail") // 接口的路径，全局唯一的
     public Result getCanvasDetail(@RequestBody page object) {
         System.out.println("接收数据:");
         System.out.println(object.getData());
