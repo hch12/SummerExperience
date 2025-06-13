@@ -19,6 +19,7 @@ public class PresetElement {
     private int width;
     private float x;
     private float y;
+    private String submissionId;
 
     // Getters and Setters
     public String getId() { return id; }
@@ -50,4 +51,7 @@ public class PresetElement {
 
     public float getY() { return y; }
     public void setY(float y) { this.y = y; }
+
+    public String getSubmissionId() { return submissionId; }
+    public void setSubmissionId(String submissionId) { this.submissionId = submissionId; }
 } 

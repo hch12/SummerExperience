@@ -22,7 +22,7 @@ public class PresetController {
         try {
             // 组装 PresetTemplate
             PresetTemplate template = new PresetTemplate();
-            template.setName((String) data.get("name"));
+            template.setName(data.get("name") != null ? (String) data.get("name") : "未命名预设");
             
             Object templateWidthObj = data.get("width");
             if (templateWidthObj instanceof Number) {
@@ -56,8 +56,12 @@ public class PresetController {
                     .filter(java.util.Objects::nonNull) // 过滤掉列表中的null元素
                     .map(e -> {
                         PresetElement element = new PresetElement();
-                        element.setType((String) e.get("type"));
-                        element.setSrc((String) e.get("src"));
+                        element.setType(e.get("type") != null ? (String) e.get("type") : "image"); // Default to 'image'
+                        element.setSrc(e.get("src") != null ? (String) e.get("src") : ""); // Default to empty string
+                        Object submissionIdObj = e.get("submissionId");
+                        if (submissionIdObj != null) {
+                            element.setSubmissionId((String) submissionIdObj);
+                        }
                         
                         Object elementWidthObj = e.get("width");
                         if (elementWidthObj instanceof Number) {
@@ -103,6 +107,24 @@ public class PresetController {
         } catch (Exception e) {
             return Result.error("上传预设失败：" + e.getMessage());
         }
+    }
+
+    @PostMapping("/list")
+    public Result getPresetList() {
+        List<PresetTemplate> presets = presetService.getPresetList();
+        return Result.success(presets);
+    }
+
+    @PostMapping("/{id}")
+    public Result getPresetById(@PathVariable String id) {
+        PresetTemplate preset = presetService.getPresetById(id);
+        return Result.success(preset);
+    }
+
+    @PostMapping("/{id}/elements")
+    public Result getPresetElements(@PathVariable String id) {
+        List<PresetElement> elements = presetService.getPresetElements(id);
+        return Result.success(elements);
     }
 
     @PostMapping("/upload/v2")
@@ -153,8 +175,12 @@ public class PresetController {
                     .filter(java.util.Objects::nonNull)
                     .map(elementData -> {
                         PresetElement element = new PresetElement();
-                        element.setType((String) elementData.get("type"));
-                        element.setSrc((String) elementData.get("src"));
+                        element.setType(elementData.get("type") != null ? (String) elementData.get("type") : "image"); // Default to 'image'
+                        element.setSrc(elementData.get("src") != null ? (String) elementData.get("src") : ""); // Default to empty string
+                        Object elementDataSubmissionIdObj = elementData.get("submissionId");
+                        if (elementDataSubmissionIdObj != null) {
+                            element.setSubmissionId((String) elementDataSubmissionIdObj);
+                        }
 
                         Object elementDataWidthObj = elementData.get("width");
                         if (elementDataWidthObj instanceof Number) {
@@ -200,23 +226,5 @@ public class PresetController {
         } catch (Exception e) {
             return Result.error("上传预设失败：" + e.getMessage());
         }
-    }
-
-    @PostMapping("/list")
-    public Result getPresetList() {
-        List<PresetTemplate> presets = presetService.getPresetList();
-        return Result.success(presets);
-    }
-
-    @PostMapping("/{id}")
-    public Result getPresetById(@PathVariable String id) {
-        PresetTemplate preset = presetService.getPresetById(id);
-        return Result.success(preset);
-    }
-
-    @PostMapping("/{id}/elements")
-    public Result getPresetElements(@PathVariable String id) {
-        List<PresetElement> elements = presetService.getPresetElements(id);
-        return Result.success(elements);
     }
 } 
