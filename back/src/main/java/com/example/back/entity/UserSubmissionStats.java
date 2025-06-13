@@ -10,6 +10,7 @@ public class UserSubmissionStats {
     private LocalDateTime createtime;
     private LocalDateTime updatetime;
 
+    // Getters and Setters
     public String getId() {
         return id;
     }
