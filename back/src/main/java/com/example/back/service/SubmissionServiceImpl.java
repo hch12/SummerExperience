@@ -38,8 +38,14 @@ public class SubmissionServiceImpl implements SubmissionService {
     }
 
     @Override
-    public Integer getMaxSubmissions() {
-        return submissionMapper.getMaxSubmissions();
+    public Integer getMaxSubmissions(String openid) {
+        Integer max = submissionMapper.getUserMaxSubmissions(openid);
+        if (max == null) {
+            // 如果该用户没有单独设置，就从系统设置表读取默认值
+            String defaultVal = submissionMapper.getSystemMaxSubmissions();
+            return defaultVal != null ? Integer.parseInt(defaultVal) : 3;
+        }
+        return max;
     }
 
     @Override
@@ -55,45 +61,57 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Override
     @Transactional
     public String submitCanvas(String openid, JSONObject data) {
+        // 先查限制表获取最大提交数
+        Integer maxSubmissions = submissionMapper.getUserMaxSubmissions(openid);
+        if (maxSubmissions == null) {
+            maxSubmissions = 5; // 默认最大提交数，比如5
+        }
+
+        UserSubmissionStats stats = submissionMapper.findUserSubmissionStatsByOpenid(openid);
+        if (stats != null && stats.getRemainingSubmissions() <= 0) {
+            throw new RuntimeException("提交次数已达上限");
+        }
+
         String canvasId = UUID.randomUUID().toString();
         int canvasWidth = data.getInt("canvasWidth");
         int canvasHeight = data.getInt("canvasHeight");
-        String name=data.getStr("name");
-        SubmittedCanvas canvas=new SubmittedCanvas();
+        String name = data.getStr("name");
+
+        SubmittedCanvas canvas = new SubmittedCanvas();
         canvas.setHeight(canvasHeight);
         canvas.setWidth(canvasWidth);
         canvas.setId(canvasId);
         canvas.setName(name);
         canvas.setOpenid(openid);
-        List<SubmittedElement> elements= new ArrayList<>();
+
+        List<SubmittedElement> elements = new ArrayList<>();
         JSONArray pageElements = data.getJSONArray("elements");
         for (int i = 0; i < pageElements.size(); i++) {
             SubmittedElement element = new SubmittedElement();
-            JSONObject pageElement =pageElements.getJSONObject(i);
+            JSONObject pageElement = pageElements.getJSONObject(i);
             element.setSrc(pageElement.getStr("src"));
             element.setX(pageElement.getDouble("x"));
             element.setY(pageElement.getDouble("y"));
             element.setWidth(pageElement.getInt("width"));
             element.setHeight(pageElement.getInt("height"));
             element.setAngle(pageElement.getDouble("angle"));
-            element.setId(openid);
+            element.setId(UUID.randomUUID().toString());  // 这里用UUID
             element.setSubmissionid(canvasId);
             elements.add(element);
         }
+
         submissionMapper.insertCanvas(canvas);
         for (SubmittedElement element : elements) {
             submissionMapper.insertElement(element);
         }
 
         // 更新用户提交统计
-        UserSubmissionStats stats = submissionMapper.findUserSubmissionStatsByOpenid(openid);
         if (stats == null) {
             stats = new UserSubmissionStats();
             stats.setId(UUID.randomUUID().toString());
             stats.setOpenid(openid);
             stats.setTotalSubmissions(1);
-            //这里没这个表我先用静态数据
-            stats.setRemainingSubmissions(4);
+            stats.setRemainingSubmissions(maxSubmissions - 1);  // 计算剩余提交数
             stats.setCreatetime(java.time.LocalDateTime.now());
             stats.setUpdatetime(java.time.LocalDateTime.now());
             submissionMapper.insertUserSubmissionStats(stats);
@@ -106,6 +124,7 @@ public class SubmissionServiceImpl implements SubmissionService {
 
         return canvasId;
     }
+
 
     @Override
     public UserSubmissionStats getUserSubmissionStats(String openid) {

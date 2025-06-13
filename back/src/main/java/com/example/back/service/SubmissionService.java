@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface SubmissionService {
     List<SubmittedCanvas> getSubmissions(String openid);
-    Integer getMaxSubmissions();
+    Integer getMaxSubmissions(String openid);
     void updateSubmissionStatus(String submissionId, String status);
     void updateMaxSubmissions(Integer maxSubmissions);
     String submitCanvas(String openid, JSONObject data);

@@ -20,8 +20,11 @@ public interface SubmissionMapper {
     @Select("SELECT * FROM submitted_elements WHERE submissionid = #{submissionid}")
     List<SubmittedElement> findElementsBySubmissionId(@Param("submissionid") String submissionid);
 
-    @Select("SELECT value FROM system_setting WHERE id = 'maxSubmissions'")
-    Integer getMaxSubmissions();
+    @Select("SELECT max_submissions FROM user_submission_limit WHERE openid = #{openid}")
+    Integer getUserMaxSubmissions(String openid);
+
+    @Select("SELECT value FROM settings WHERE id = 'maxSubmissions'")
+    String getSystemMaxSubmissions();
 
     @Update("UPDATE submitted_canvas SET status = #{status} WHERE id = #{submissionId}")
     void updateSubmissionStatus(@Param("submissionId") String submissionId, @Param("status") String status);

@@ -82,7 +82,7 @@ public class canvasController {
             // 获取更新后的剩余提交次数
             UserSubmissionStats stats = submissionService.getUserSubmissionStats(openID);
             int remainingSubmissions = stats != null ? stats.getRemainingSubmissions() :
-                    submissionService.getMaxSubmissions() - 1;
+                    submissionService.getMaxSubmissions(openID) - 1;
 
             return Result.success(Map.of(
                     "submissionId", submissionId,

@@ -8,9 +8,13 @@ import com.example.back.entity.UserSubmissionStats;
 import com.example.back.service.SubmissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import com.example.back.entity.page;
 
 import java.util.List;
 import java.util.Map;
+import cn.hutool.json.JSONObject;
+import java.util.HashMap;
+
 
 @RestController
 @RequestMapping("/api/submission")
@@ -26,7 +30,7 @@ public class SubmissionController {
     @PostMapping("/list")
     public Result getSubmissions(@RequestBody Map<String, String> request) {
         try {
-            String openID = request.get("openID");
+            String openID = request.get("openid");
             if (openID == null || openID.isEmpty()) {
                 return Result.error("Missing openID");
             }
@@ -36,26 +40,39 @@ public class SubmissionController {
         }
     }
 
-    @PostMapping("/maxSubmissions")
-    public Result getMaxSubmissions() {
+    @PostMapping("/max")
+    public Result getMaxSubmissions(@RequestBody page page) {
+        String openid = page.getOpenid();
+        if (openid == null || openid.isEmpty()) {
+            return Result.error("缺少 openid");
+        }
+
         try {
-            return Result.success(Map.of(
-                    "maxSubmissions", submissionService.getMaxSubmissions(),
-                    "success", true
-            ));
+            Integer max = submissionService.getMaxSubmissions(openid);
+            Map<String, Object> result = new HashMap<>();
+            result.put("maxSubmissions", max);
+            result.put("success", true);
+            return Result.success(result);
         } catch (Exception e) {
-            return Result.error("获取最大提交数失败: " + e.getMessage());
+            return Result.error("查询失败: " + e.getMessage());
         }
     }
 
-    @PostMapping("/updateStatus")
-    public Result updateSubmissionStatus(@RequestBody Map<String, String> data) {
+    @PostMapping("/update-status")
+    public Result updateSubmissionStatus(@RequestBody page page) {
         try {
-            String submissionId = data.get("submissionId");
-            String status = data.get("status");
+            String openid = page.getOpenid();
+            JSONObject data = page.getData();
+
+            if (openid == null || data == null) {
+                return Result.error("缺少参数");
+            }
+
+            String submissionId = data.getStr("submissionId");  // 注意大小写需和前端一致
+            String status = data.getStr("status");
 
             if (submissionId == null || status == null) {
-                return Result.error("Invalid parameters");
+                return Result.error("缺少 submissionId 或 status");
             }
 
             submissionService.updateSubmissionStatus(submissionId, status);
@@ -65,7 +82,8 @@ public class SubmissionController {
         }
     }
 
-    @PostMapping("/updateMaxSubmissions")
+
+    @PostMapping("/update-max")
     public Result updateMaxSubmissions(@RequestBody Map<String, Integer> data) {
         try {
             Integer maxSubmissions = data.get("maxSubmissions");
