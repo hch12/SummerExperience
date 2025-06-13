@@ -1,6 +1,8 @@
 package com.example.back.entity;
 
-import java.sql.Date;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.example.back.config.LocalDateTimeSerializer;
+import java.time.LocalDateTime;
 
 public class Element {
     private String openid;
@@ -11,28 +13,17 @@ public class Element {
     private int height;
     private double angle;
     private String canvasid;
-    private java.sql.Date createtime;  // 或 LocalDateTime
-    private Date updatetime;  // 或 LocalDateTime
 
-    public String getCanvasid() {
-        return canvasid;
-    }
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime createTime;
 
-    public void setCanvasid(String canvasid) {
-        this.canvasid = canvasid;
-    }
-
-    public String getOpenid() {
-        return openid;
-    }
-
-    public void setOpenid(String openid) {
-        this.openid = openid;
-    }
-
-
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime updateTime;
 
     // Getter和Setter方法
+    public String getOpenid() { return openid; }
+    public void setOpenid(String openid) { this.openid = openid; }
+
     public String getSrc() { return src; }
     public void setSrc(String src) { this.src = src; }
 
@@ -50,6 +41,16 @@ public class Element {
 
     public double getAngle() { return angle; }
     public void setAngle(double angle) { this.angle = angle; }
+
+    public String getCanvasid() { return canvasid; }
+    public void setCanvasid(String canvasid) { this.canvasid = canvasid; }
+
+    public LocalDateTime getCreateTime() { return createTime; }
+    public void setCreateTime(LocalDateTime createTime) { this.createTime = createTime; }
+
+    public LocalDateTime getUpdateTime() { return updateTime; }
+    public void setUpdateTime(LocalDateTime updateTime) { this.updateTime = updateTime; }
+
     @Override
     public String toString() {
         return "Element{" +
@@ -59,6 +60,8 @@ public class Element {
                 ", width=" + width +
                 ", height=" + height +
                 ", angle=" + angle +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
                 '}';
     }
 }

@@ -9,13 +9,9 @@ import java.util.List;
 public interface canvasMapper {
     /**
      * 插入画布基本信息
-     * @param height 画布高度
-     * @param width 画布宽度
-     * @param canvasid 画布唯一标识
-     * @param openid 用户唯一标识
      */
     @Insert("INSERT INTO canvas_info (name, createtime, updatetime, height, width, canvasid, openid) " +
-            "VALUES ('未命名作品', NOW(), NOW(), #{height}, #{width}, #{canvasid}, #{openid})")
+            "VALUES ('未命名作品', NOW(6), NOW(6), #{height}, #{width}, #{canvasid}, #{openid})")
     void insertCanvas(
             @Param("height") int height,
             @Param("width") int width,
@@ -24,16 +20,13 @@ public interface canvasMapper {
 
     /**
      * 插入画布元素信息
-     * @param element
      */
     @Insert("INSERT INTO canvas_elements (angle, canvasid, createtime, updatetime, height, openid, src, width, x, y) " +
-            "VALUES (#{angle}, #{canvasid}, NOW(), NOW(), #{height}, #{openid}, #{src}, #{width}, #{x}, #{y})")
+            "VALUES (#{angle}, #{canvasid}, NOW(6), NOW(6), #{height}, #{openid}, #{src}, #{width}, #{x}, #{y})")
     void insertElement(Element element);
 
     /**
      * 根据画布ID和用户ID删除元素数据
-     * @param canvasId 画布唯一标识
-     * @param openId 用户唯一标识
      */
     @Delete("DELETE FROM canvas_elements WHERE canvasid = #{canvasId} AND openid = #{openId}")
     void deleteElementByCanvasIdAndOpenId(
@@ -42,9 +35,6 @@ public interface canvasMapper {
 
     /**
      * 根据画布ID和用户ID查询画布信息
-     * @param canvasId 画布唯一标识
-     * @param openId 用户唯一标识
-     * @return 画布信息实体
      */
     @Select("SELECT name, createtime, updatetime, height, width, canvasid, openid FROM canvas_info " +
             "WHERE canvasid = #{canvasId} AND openid = #{openId}")
@@ -54,13 +44,9 @@ public interface canvasMapper {
 
     /**
      * 根据画布ID和用户ID更新画布信息
-     * @param canvasHeight 新的画布高度
-     * @param canvasWidth 新的画布宽度
-     * @param canvasId 画布唯一标识
-     * @param openId 用户唯一标识
      */
     @Update("UPDATE canvas_info " +
-            "SET height = #{canvasHeight}, width = #{canvasWidth}, updatetime = NOW() " +
+            "SET height = #{canvasHeight}, width = #{canvasWidth}, updatetime = NOW(6) " +
             "WHERE canvasid = #{canvasId} AND openid = #{openId}")
     void updateinfoByCanvasIdAndOpenId(
             @Param("canvasHeight") int canvasHeight,
@@ -70,8 +56,6 @@ public interface canvasMapper {
 
     /**
      * 根据用户openid获取该用户的所有画布列表
-     * @param openId 用户唯一标识
-     * @return 画布信息列表
      */
     @Select("SELECT name, createtime, updatetime, height, width, canvasid, openid FROM canvas_info WHERE openid = #{openId}")
     List<CanvasInfo> selectCanvasListByOpenId(@Param("openId") String openId);
@@ -85,16 +69,6 @@ public interface canvasMapper {
 
     /**
      * 根据canvasid和openid删除画布基本信息
-     * 由于设置了级联删除，关联的元素将自动被删除
-     *
-     @param canvasId
-     画布唯一标识
-     *
-     @param openId
-     用户唯一标识
-     *
-     @return
-     删除的记录数
      */
     @Delete("DELETE FROM canvas_info WHERE canvasid = #{canvasId} AND openid = #{openId}")
     int deleteCanvasInfoByCanvasIdAndOpenId(
@@ -103,12 +77,8 @@ public interface canvasMapper {
 
     /**
      * 根据canvasid和openid更新画布名称
-     * @param canvasId 画布唯一标识
-     * @param openId 用户唯一标识
-     * @param name 新的画布名称
-     * @return 更新的记录数
      */
-    @Update("UPDATE canvas_info SET name = #{name}, updatetime = NOW() " +
+    @Update("UPDATE canvas_info SET name = #{name}, updatetime = NOW(6) " +
             "WHERE canvasid = #{canvasId} AND openid = #{openId}")
     int updateCanvasName(
             @Param("canvasId") String canvasId,
