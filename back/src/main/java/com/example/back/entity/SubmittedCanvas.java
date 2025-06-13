@@ -1,5 +1,8 @@
 package com.example.back.entity;
 
+import com.example.back.config.LocalDateTimeSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -10,7 +13,11 @@ public class SubmittedCanvas {
     private String name;
     private String openid;
     private String status;
-    private LocalDateTime updatetime;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime createTime;
+
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime updateTime;
     private Integer width;
     private List<SubmittedElement> elements;
 
@@ -27,8 +34,18 @@ public class SubmittedCanvas {
     public void setOpenid(String openid) { this.openid = openid; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
-    public LocalDateTime getUpdatetime() { return updatetime; }
-    public void setUpdatetime(LocalDateTime updatetime) { this.updatetime = updatetime; }
+    public LocalDateTime getCreateTime() {
+        return createTime;
+    }
+    public void setCreateTime(LocalDateTime createTime) {
+        this.createTime = createTime;
+    }
+    public LocalDateTime getUpdateTime() {
+        return updateTime;
+    }
+    public void setUpdateTime(LocalDateTime updateTime) {
+        this.updateTime = updateTime;
+    }
     public Integer getWidth() { return width; }
     public void setWidth(Integer width) { this.width = width; }
     public List<SubmittedElement> getElements() { return elements; }

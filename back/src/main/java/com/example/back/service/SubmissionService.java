@@ -1,5 +1,7 @@
 package com.example.back.service;
 
+import cn.hutool.json.JSON;
+import cn.hutool.json.JSONObject;
 import com.example.back.entity.SubmittedCanvas;
 import com.example.back.entity.SubmittedElement;
 import com.example.back.entity.UserSubmissionStats;
@@ -10,7 +12,7 @@ public interface SubmissionService {
     Integer getMaxSubmissions();
     void updateSubmissionStatus(String submissionId, String status);
     void updateMaxSubmissions(Integer maxSubmissions);
-    String submitCanvas(String openid, SubmittedCanvas canvas, List<SubmittedElement> elements);
+    String submitCanvas(String openid, JSONObject data);
 
     // 添加的新方法
     UserSubmissionStats getUserSubmissionStats(String openid);

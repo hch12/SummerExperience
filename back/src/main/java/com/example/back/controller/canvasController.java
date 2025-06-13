@@ -65,24 +65,19 @@ public class canvasController {
         return Result.success(result);  // 接口的返回值
     }
     @PostMapping("/submit")
-    public Result submitCanvas(@RequestBody CanvasRequest request) {
+    public Result submitCanvas(@RequestBody page request) {
         try {
             String openID = request.getOpenid();
-            SubmittedCanvas canvas = request.getCanvas();
+            JSONObject data = request.getData();
 
             if (openID == null || openID.isEmpty()) {
                 return Result.error("Missing openID");
             }
-            if (canvas == null) {
+            if (data == null) {
                 return Result.error("Canvas data is missing");
             }
 
-            List<SubmittedElement> elements = canvas.getElements();
-            if (elements == null || elements.isEmpty()) {
-                return Result.error("Canvas must contain at least one element");
-            }
-
-            String submissionId = submissionService.submitCanvas(openID, canvas, elements);
+            String submissionId = submissionService.submitCanvas(openID,data);
 
             // 获取更新后的剩余提交次数
             UserSubmissionStats stats = submissionService.getUserSubmissionStats(openID);

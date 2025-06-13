@@ -1,11 +1,18 @@
 package com.example.back.entity;
 
+import com.example.back.config.LocalDateTimeSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import java.time.LocalDateTime;
 
 public class SubmittedElement {
     private String id;
     private Double angle;
-    private LocalDateTime createtime;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime createTime;
+
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime updateTime;
     private Integer height;
     private String src;
     private String submissionid;
@@ -19,8 +26,6 @@ public class SubmittedElement {
     public void setId(String id) { this.id = id; }
     public Double getAngle() { return angle; }
     public void setAngle(Double angle) { this.angle = angle; }
-    public LocalDateTime getCreatetime() { return createtime; }
-    public void setCreatetime(LocalDateTime createtime) { this.createtime = createtime; }
     public Integer getHeight() { return height; }
     public void setHeight(Integer height) { this.height = height; }
     public String getSrc() { return src; }
@@ -34,5 +39,22 @@ public class SubmittedElement {
     public Double getX() { return x; }
     public void setX(Double x) { this.x = x; }
     public Double getY() { return y; }
+
+    public LocalDateTime getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(LocalDateTime createTime) {
+        this.createTime = createTime;
+    }
+
+    public LocalDateTime getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(LocalDateTime updateTime) {
+        this.updateTime = updateTime;
+    }
+
     public void setY(Double y) { this.y = y; }
 }

@@ -29,12 +29,12 @@ public interface SubmissionMapper {
     @Update("UPDATE system_setting SET value = #{maxSubmissions} WHERE id = 'maxSubmissions'")
     void updateMaxSubmissions(@Param("maxSubmissions") Integer maxSubmissions);
 
-    @Insert("INSERT INTO submitted_canvas (id, createtime, height, name, openid, status, updatetime, width) " +
-            "VALUES (#{id}, #{createtime}, #{height}, #{name}, #{openid}, #{status}, #{updatetime}, #{width})")
+    @Insert("INSERT INTO submitted_canvas (id, createtime, height, name, openid, updatetime, width) " +
+            "VALUES (#{id}, NOW(6), #{height}, #{name}, #{openid}, NOW(6), #{width})")
     void insertCanvas(SubmittedCanvas canvas);
 
-    @Insert("INSERT INTO submitted_elements (id, angle, createtime, height, src, submissionid, type, width, x, y) " +
-            "VALUES (#{id}, #{angle}, #{createtime}, #{height}, #{src}, #{submissionid}, #{type}, #{width}, #{x}, #{y})")
+    @Insert("INSERT INTO submitted_elements (id, angle, createtime, updatetime, height, src, submissionid, width, x, y) " +
+            "VALUES (#{id}, #{angle}, NOW(6), NOW(6), #{height}, #{src}, #{submissionid}, #{width}, #{x}, #{y})")
     void insertElement(SubmittedElement element);
 
     // 新增用户提交统计相关方法

@@ -1,5 +1,8 @@
 package com.example.back.service;
 
+import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONObject;
+import com.example.back.entity.Element;
 import com.example.back.entity.SubmittedCanvas;
 import com.example.back.entity.SubmittedElement;
 import com.example.back.entity.UserSubmissionStats;
@@ -8,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,20 +54,34 @@ public class SubmissionServiceImpl implements SubmissionService {
 
     @Override
     @Transactional
-    public String submitCanvas(String openid, SubmittedCanvas canvas, List<SubmittedElement> elements) {
+    public String submitCanvas(String openid, JSONObject data) {
         String canvasId = UUID.randomUUID().toString();
+        int canvasWidth = data.getInt("canvasWidth");
+        int canvasHeight = data.getInt("canvasHeight");
+        String name=data.getStr("name");
+        SubmittedCanvas canvas=new SubmittedCanvas();
+        canvas.setHeight(canvasHeight);
+        canvas.setWidth(canvasWidth);
         canvas.setId(canvasId);
+        canvas.setName(name);
         canvas.setOpenid(openid);
-        canvas.setStatus("pending");
-        canvas.setCreatetime(java.time.LocalDateTime.now());
-        canvas.setUpdatetime(java.time.LocalDateTime.now());
-
-        submissionMapper.insertCanvas(canvas);
-
-        for (SubmittedElement element : elements) {
-            element.setId(UUID.randomUUID().toString());
+        List<SubmittedElement> elements= new ArrayList<>();
+        JSONArray pageElements = data.getJSONArray("elements");
+        for (int i = 0; i < pageElements.size(); i++) {
+            SubmittedElement element = new SubmittedElement();
+            JSONObject pageElement =pageElements.getJSONObject(i);
+            element.setSrc(pageElement.getStr("src"));
+            element.setX(pageElement.getDouble("x"));
+            element.setY(pageElement.getDouble("y"));
+            element.setWidth(pageElement.getInt("width"));
+            element.setHeight(pageElement.getInt("height"));
+            element.setAngle(pageElement.getDouble("angle"));
+            element.setId(openid);
             element.setSubmissionid(canvasId);
-            element.setCreatetime(java.time.LocalDateTime.now());
+            elements.add(element);
+        }
+        submissionMapper.insertCanvas(canvas);
+        for (SubmittedElement element : elements) {
             submissionMapper.insertElement(element);
         }
 
@@ -74,7 +92,8 @@ public class SubmissionServiceImpl implements SubmissionService {
             stats.setId(UUID.randomUUID().toString());
             stats.setOpenid(openid);
             stats.setTotalSubmissions(1);
-            stats.setRemainingSubmissions(getMaxSubmissions() - 1);
+            //这里没这个表我先用静态数据
+            stats.setRemainingSubmissions(4);
             stats.setCreatetime(java.time.LocalDateTime.now());
             stats.setUpdatetime(java.time.LocalDateTime.now());
             submissionMapper.insertUserSubmissionStats(stats);
