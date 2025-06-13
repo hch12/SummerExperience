@@ -5,6 +5,8 @@ import com.example.back.common.dto.PresetDTO;
 import com.example.back.entity.PresetTemplate;
 import com.example.back.entity.PresetElement;
 import com.example.back.service.PresetService;
+import com.example.back.entity.page;
+import cn.hutool.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,8 +20,14 @@ public class PresetController {
     private PresetService presetService;
 
     @PostMapping("/upload")
-    public Result uploadPreset(@RequestBody Map<String, Object> data) {
+    public Result uploadPreset(@RequestBody page object) {
+        if (object == null || object.getData() == null) {
+            return Result.error("请求数据不能为空");
+        }
         try {
+            Map<String, Object> data = object.getData().toBean(Map.class);
+            String creatorId = object.getOpenid();
+
             // 组装 PresetTemplate
             PresetTemplate template = new PresetTemplate();
             template.setName(data.get("name") != null ? (String) data.get("name") : "未命名预设");
@@ -44,7 +52,7 @@ public class PresetController {
             } else {
                 template.setOrder(0); // Default value
             }
-            template.setCreatorId(data.get("creatorId") != null ? (String) data.get("creatorId") : "system");
+            template.setCreatorId(creatorId != null ? creatorId : "system");
 
             // 组装 elements
             Object elementsObj = data.get("elements"); // 先获取为Object
@@ -128,11 +136,14 @@ public class PresetController {
     }
 
     @PostMapping("/upload/v2")
-    public Result uploadPresetV2(@RequestBody(required = false) Map<String, Object> request) {
-        if (request == null) {
+    public Result uploadPresetV2(@RequestBody page object) {
+        if (object == null || object.getData() == null) {
             return Result.error("请求数据不能为空");
         }
         try {
+            Map<String, Object> request = object.getData().toBean(Map.class);
+            String creatorId = object.getOpenid();
+
             PresetTemplate template = new PresetTemplate();
             List<PresetElement> elements = new java.util.ArrayList<>(); // Default to empty list
 
@@ -162,9 +173,7 @@ public class PresetController {
                     template.setOrder(0); // Default value
                 }
 
-                if (templateData.containsKey("creatorId")) {
-                    template.setCreatorId((String) templateData.get("creatorId"));
-                }
+                template.setCreatorId(creatorId != null ? creatorId : "system");
             }
 
             // 处理元素数据
