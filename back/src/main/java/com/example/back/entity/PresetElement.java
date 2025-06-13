@@ -1,11 +1,17 @@
 package com.example.back.entity;
 
+import com.example.back.config.LocalDateTimeSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import java.time.LocalDateTime;
 
 public class PresetElement {
     private String id;
     private float angle;
+
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createTime;
+
     private int height;
     private String presetId;
     private String src;

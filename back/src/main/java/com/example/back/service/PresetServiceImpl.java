@@ -22,8 +22,6 @@ public class PresetServiceImpl implements PresetService {
         // 生成UUID
         String templateId = UUID.randomUUID().toString().replace("-", "");
         template.setId(templateId);
-        template.setCreateTime(LocalDateTime.now());
-        template.setUpdateTime(LocalDateTime.now());
         
         // 保存template
         presetMapper.insertPresetTemplate(template);
@@ -32,7 +30,6 @@ public class PresetServiceImpl implements PresetService {
         for (PresetElement element : elements) {
             element.setId(UUID.randomUUID().toString().replace("-", ""));
             element.setPresetId(templateId);
-            element.setCreateTime(LocalDateTime.now());
             presetMapper.insertPresetElement(element);
         }
     }

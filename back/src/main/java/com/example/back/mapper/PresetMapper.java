@@ -8,12 +8,12 @@ import java.util.List;
 
 @Mapper
 public interface PresetMapper {
-    @Insert("INSERT INTO preset_templates (id, createtime, creatorid, height, name, `order`, updatetime, width) " +
-            "VALUES (#{id}, #{createTime}, #{creatorId}, #{height}, #{name}, #{order}, #{updateTime}, #{width})")
+    @Insert("INSERT INTO preset_templates (id, creatorid, height, name, `order`, width, createtime, updatetime) " +
+            "VALUES (#{id}, #{creatorId}, #{height}, #{name}, #{order}, #{width}, NOW(6), NOW(6))")
     void insertPresetTemplate(PresetTemplate template);
 
-    @Insert("INSERT INTO preset_elements (id, angle, createtime, height, presetid, src, type, width, x, y) " +
-            "VALUES (#{id}, #{angle}, #{createTime}, #{height}, #{presetId}, #{src}, #{type}, #{width}, #{x}, #{y})")
+    @Insert("INSERT INTO preset_elements (id, angle, height, presetid, src, type, width, x, y, createtime, updatetime) " +
+            "VALUES (#{id}, #{angle}, #{height}, #{presetId}, #{src}, #{type}, #{width}, #{x}, #{y}, NOW(6), NOW(6))")
     void insertPresetElement(PresetElement element);
 
     @Select("SELECT * FROM preset_templates ORDER BY `order` ASC")
