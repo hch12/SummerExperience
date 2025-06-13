@@ -81,39 +81,5 @@ public class SubmissionController {
         }
     }
 
-    @PostMapping("/submitCanvas")
-    public Result submitCanvas(@RequestBody CanvasRequest request) {
-        try {
-            String openID = request.getOpenID();
-            SubmittedCanvas canvas = request.getCanvas();
 
-            if (openID == null || openID.isEmpty()) {
-                return Result.error("Missing openID");
-            }
-            if (canvas == null) {
-                return Result.error("Canvas data is missing");
-            }
-
-            List<SubmittedElement> elements = canvas.getElements();
-            if (elements == null || elements.isEmpty()) {
-                return Result.error("Canvas must contain at least one element");
-            }
-
-            String submissionId = submissionService.submitCanvas(openID, canvas, elements);
-
-            // 获取更新后的剩余提交次数
-            UserSubmissionStats stats = submissionService.getUserSubmissionStats(openID);
-            int remainingSubmissions = stats != null ? stats.getRemainingSubmissions() :
-                    submissionService.getMaxSubmissions() - 1;
-
-            return Result.success(Map.of(
-                    "submissionId", submissionId,
-                    "remainingSubmissions", remainingSubmissions
-            ));
-        } catch (IllegalStateException e) {
-            return Result.error(e.getMessage());
-        } catch (Exception e) {
-            return Result.error("提交失败: " + e.getMessage());
-        }
-    }
 }
