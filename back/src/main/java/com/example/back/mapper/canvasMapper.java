@@ -57,7 +57,8 @@ public interface canvasMapper {
     /**
      * 根据用户openid获取该用户的所有画布列表
      */
-    @Select("SELECT name, createtime, updatetime, height, width, canvasid, openid FROM canvas_info WHERE openid = #{openId}")
+    @Select("SELECT name, createtime, updatetime, height, width, canvasid, openid FROM canvas_info " +
+            "WHERE openid = #{openId} ORDER BY updatetime DESC")
     List<CanvasInfo> selectCanvasListByOpenId(@Param("openId") String openId);
 
     @Select("SELECT DISTINCT canvasid FROM canvas_info")

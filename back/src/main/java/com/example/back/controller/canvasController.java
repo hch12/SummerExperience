@@ -67,7 +67,7 @@ public class canvasController {
     @PostMapping("/submit")
     public Result submitCanvas(@RequestBody CanvasRequest request) {
         try {
-            String openID = request.getOpenID();
+            String openID = request.getOpenid();
             SubmittedCanvas canvas = request.getCanvas();
 
             if (openID == null || openID.isEmpty()) {

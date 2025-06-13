@@ -3,15 +3,15 @@ package com.example.back.entity;
 import com.example.back.entity.SubmittedCanvas;
 
 public class CanvasRequest {
-    private String openID;
+    private String openid;
     private SubmittedCanvas canvas;
 
-    public String getOpenID() {
-        return openID;
+    public String getOpenid() {
+        return openid;
     }
 
-    public void setOpenID(String openID) {
-        this.openID = openID;
+    public void setOpenid(String openid) {
+        this.openid = openid;
     }
 
     public SubmittedCanvas getCanvas() {
