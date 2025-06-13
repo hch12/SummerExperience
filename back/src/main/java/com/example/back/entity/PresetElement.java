@@ -1,11 +1,17 @@
 package com.example.back.entity;
 
+import com.example.back.config.LocalDateTimeSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import java.time.LocalDateTime;
 
 public class PresetElement {
     private String id;
     private float angle;
+
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createTime;
+
     private int height;
     private String presetId;
     private String src;
@@ -13,6 +19,7 @@ public class PresetElement {
     private int width;
     private float x;
     private float y;
+    private String submissionId;
 
     // Getters and Setters
     public String getId() { return id; }
@@ -44,4 +51,7 @@ public class PresetElement {
 
     public float getY() { return y; }
     public void setY(float y) { this.y = y; }
+
+    public String getSubmissionId() { return submissionId; }
+    public void setSubmissionId(String submissionId) { this.submissionId = submissionId; }
 } 
