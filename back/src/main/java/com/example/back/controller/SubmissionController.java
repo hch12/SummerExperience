@@ -1,13 +1,14 @@
 package com.example.back.controller;
 
 import com.example.back.common.Result;
+import com.example.back.entity.CanvasRequest;
 import com.example.back.entity.SubmittedCanvas;
 import com.example.back.entity.SubmittedElement;
+import com.example.back.entity.UserSubmissionStats;
 import com.example.back.service.SubmissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,59 +23,97 @@ public class SubmissionController {
         this.submissionService = submissionService;
     }
 
-    @GetMapping("/list")
-    public Result getSubmissions(@RequestParam String openID) {
-        List<SubmittedCanvas> data = submissionService.getSubmissions(openID);
-        Map<String, Object> result = new HashMap<>();
-        result.put("data", data);
-        return Result.success(result);
+    @PostMapping("/list")
+    public Result getSubmissions(@RequestBody Map<String, String> request) {
+        try {
+            String openID = request.get("openID");
+            if (openID == null || openID.isEmpty()) {
+                return Result.error("Missing openID");
+            }
+            return Result.success(Map.of("data", submissionService.getSubmissions(openID)));
+        } catch (Exception e) {
+            return Result.error("获取提交列表失败: " + e.getMessage());
+        }
     }
 
-    @GetMapping("/maxSubmissions")
+    @PostMapping("/maxSubmissions")
     public Result getMaxSubmissions() {
-        Integer maxSubmissions = submissionService.getMaxSubmissions();
-        Map<String, Object> result = new HashMap<>();
-        result.put("maxSubmissions", maxSubmissions);
-        result.put("success", true);
-        return Result.success(result);
+        try {
+            return Result.success(Map.of(
+                    "maxSubmissions", submissionService.getMaxSubmissions(),
+                    "success", true
+            ));
+        } catch (Exception e) {
+            return Result.error("获取最大提交数失败: " + e.getMessage());
+        }
     }
 
     @PostMapping("/updateStatus")
-    public Result updateSubmissionStatus(@RequestParam String openID, @RequestBody Map<String, String> data) {
-        String submissionId = data.get("submissionId");
-        String status = data.get("status");
+    public Result updateSubmissionStatus(@RequestBody Map<String, String> data) {
+        try {
+            String submissionId = data.get("submissionId");
+            String status = data.get("status");
 
-        if (submissionId == null || status == null) {
-            return Result.error("Invalid parameters");
+            if (submissionId == null || status == null) {
+                return Result.error("Invalid parameters");
+            }
+
+            submissionService.updateSubmissionStatus(submissionId, status);
+            return Result.success("状态更新成功");
+        } catch (Exception e) {
+            return Result.error("更新状态失败: " + e.getMessage());
         }
-
-        submissionService.updateSubmissionStatus(submissionId, status);
-        return Result.success("Status updated successfully");
     }
 
     @PostMapping("/updateMaxSubmissions")
     public Result updateMaxSubmissions(@RequestBody Map<String, Integer> data) {
-        Integer maxSubmissions = data.get("maxSubmissions");
+        try {
+            Integer maxSubmissions = data.get("maxSubmissions");
 
-        if (maxSubmissions == null) {
-            return Result.error("Invalid parameters");
+            if (maxSubmissions == null) {
+                return Result.error("Invalid parameters");
+            }
+
+            submissionService.updateMaxSubmissions(maxSubmissions);
+            return Result.success("最大提交数更新成功");
+        } catch (Exception e) {
+            return Result.error("更新最大提交数失败: " + e.getMessage());
         }
-
-        submissionService.updateMaxSubmissions(maxSubmissions);
-        return Result.success("Max submissions updated successfully");
     }
 
     @PostMapping("/submitCanvas")
-    public Result submitCanvas(@RequestParam String openID, @RequestBody SubmittedCanvas canvas) {
-        List<SubmittedElement> elements = canvas.getElements();
-        if (elements == null || elements.isEmpty()) {
-            return Result.error("Canvas must contain at least one element");
-        }
+    public Result submitCanvas(@RequestBody CanvasRequest request) {
+        try {
+            String openID = request.getOpenID();
+            SubmittedCanvas canvas = request.getCanvas();
 
-        String submissionId = submissionService.submitCanvas(openID, canvas, elements);
-        Map<String, Object> result = new HashMap<>();
-        result.put("submissionId", submissionId);
-        result.put("remainingSubmissions", submissionService.getMaxSubmissions() - 1);
-        return Result.success(result);
+            if (openID == null || openID.isEmpty()) {
+                return Result.error("Missing openID");
+            }
+            if (canvas == null) {
+                return Result.error("Canvas data is missing");
+            }
+
+            List<SubmittedElement> elements = canvas.getElements();
+            if (elements == null || elements.isEmpty()) {
+                return Result.error("Canvas must contain at least one element");
+            }
+
+            String submissionId = submissionService.submitCanvas(openID, canvas, elements);
+
+            // 获取更新后的剩余提交次数
+            UserSubmissionStats stats = submissionService.getUserSubmissionStats(openID);
+            int remainingSubmissions = stats != null ? stats.getRemainingSubmissions() :
+                    submissionService.getMaxSubmissions() - 1;
+
+            return Result.success(Map.of(
+                    "submissionId", submissionId,
+                    "remainingSubmissions", remainingSubmissions
+            ));
+        } catch (IllegalStateException e) {
+            return Result.error(e.getMessage());
+        } catch (Exception e) {
+            return Result.error("提交失败: " + e.getMessage());
+        }
     }
 }
