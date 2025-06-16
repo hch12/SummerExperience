@@ -51,4 +51,10 @@ public interface SubmissionMapper {
     @Update("UPDATE user_submission_stats SET totalSubmissions = #{totalSubmissions}, " +
             "remainingSubmissions = #{remainingSubmissions}, updatetime = #{updatetime} WHERE openid = #{openid}")
     void updateUserSubmissionStats(UserSubmissionStats stats);
+
+    @Select("  SELECT * FROM user_submission_stats")
+    List<UserSubmissionStats> findAllUserSubmissionStats();
+
+    @Select("SELECT * FROM submitted_canvas")
+    List<SubmittedCanvas> findAllCanvases();
 }
